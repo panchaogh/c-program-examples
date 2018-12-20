@@ -5,8 +5,12 @@
 #ifndef BASICS_ADDRESSBOOK_H
 #define BASICS_ADDRESSBOOK_H
 
-#define PRINT_FORMAT1 printf("------------------------------------------------\n")
-#define PRINT_FORMAT2 printf("姓名\t手机号码\n")
+#define PRINT_FORMAT1 printf("--------------------------------------------\n")
+#define PRINT_FORMAT2 printf("姓名         手机号码\n")
+#define PRINT_FORMAT3 printf("/******************************************\\\n")
+#define PRINT_FORMAT4 printf("\\******************************************/\n")
+
+#define FILE_PATH "../resources/AddressBook.txt"
 
 typedef struct AddressBook{
     char name[50]; //姓名

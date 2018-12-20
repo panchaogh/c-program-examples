@@ -20,7 +20,7 @@ Option menuList() {
     int c = 0;
     system("clear");/*清屏*/
     printf("\n");
-    printf("/******************************************\\\n");
+    PRINT_FORMAT3;
     printf("*                                          *\n");
     printf("*        通  讯  录  管  理  系  统        *\n");
     printf("*                  主菜单                  *\n");
@@ -34,7 +34,7 @@ Option menuList() {
     printf("*             6. 显示所有联系人信息        *\n");
     printf("*             7. 退出管理系统              *\n");
     printf("*                                          *\n");
-    printf("\\******************************************/\n");
+    PRINT_FORMAT4;
     printf("\n");
     do {
         printf("请选择对应的序号(0~7):"); //提示输入选项
@@ -50,17 +50,21 @@ Option menuList() {
  */
 void addAddressBook() {
     int n;
+    system("clear");/*清屏*/
     printf("请输入当前增加的联系人总个数：");//提示信息
     scanf("%d", &n); //输入记录数
     printf("请输入记录：\n"); //提示输入记录
     PRINT_FORMAT2;
     PRINT_FORMAT1;
     for (int i = 0; i < n; i++) {
-        scanf("%s", addressBooks[i].name);
+        scanf("%s", addressBooks[i].name); //不用加&, 因为在C语言中数组名就代表该数组的起始地址
         scanf("%s", addressBooks[i].phone);
     }
     PRINT_FORMAT1;
     countPerson = n;
+    printf("增加通讯录数据成功，按任意键继续！");
+    getchar();
+    getchar();
 }
 
 /**
@@ -84,10 +88,11 @@ int selectByName(char name[]) {
 void showByName() {
     int i;
     char name[50]; /*记录要查找的联系人姓名*/
+    system("clear");/*清屏*/
     printf("请输入要查找的联系人姓名:\n");
     scanf("%s", name); /*输入要查找的联系人姓名*/
-    printf("\n\n************************************\n");
-    printf("姓名\t手机号码\n");
+    PRINT_FORMAT3;
+    PRINT_FORMAT2;
     PRINT_FORMAT1;
     i = selectByName(name);
     if (i == -1) {
@@ -95,7 +100,10 @@ void showByName() {
     } else {
         printf("%-16s%-11s\n", addressBooks[i].name, addressBooks[i].phone);
     }
-    printf("****************************************\n");
+    PRINT_FORMAT4;
+    printf("按任意键继续！");
+    getchar();
+    getchar();
 }
 
 /**
@@ -103,12 +111,17 @@ void showByName() {
  */
 void showAll() {
     int i;
-    printf("\n\n************************************\n");
-    printf("姓名         手机号码\n");
+    system("clear");/*清屏*/
+    PRINT_FORMAT3;
+    PRINT_FORMAT2;
+    PRINT_FORMAT1;
     for (i = 0; i < countPerson; i++) {
         printf("%-16s%-11s\n", addressBooks[i].name, addressBooks[i].phone);
     }
-    printf("****************************************\n");
+    PRINT_FORMAT4;
+    printf("按任意键继续！");
+    getchar();
+    getchar();
 }
 
 /**
@@ -119,6 +132,7 @@ void addPerson() {
     char s[50]; /*确定插入在哪个记录之前*/
     AddressBook personInfo;
     memset(&personInfo, 0, sizeof(personInfo));
+    system("clear");/*清屏*/
     printf("请输入以下信息的值\n");
     PRINT_FORMAT2;
     PRINT_FORMAT1;
@@ -137,17 +151,27 @@ void addPerson() {
         memcpy(&(addressBooks[i]), &(personInfo), sizeof(AddressBook));
     }
     countPerson++;
+    printf("增加通讯录人员成功，按任意键继续！");
+    getchar();
+    getchar();
 }
 
+/**
+ * 根据名称删除通讯录联系人
+ */
 void deletePersonByName() {
     int i, j;
     int ch = 0;
     char s[50]; /*确定插入在哪个记录之前*/
+    system("clear");/*清屏*/
     printf("请输入要删除的联系人的姓名：\n"); /*提示信息*/
     scanf("%s", s);/*从键盘取得输入的姓名*/
     i = selectByName(s);
     if (i == -1) {
         printf("没找到要删除的联系人\n"); /*显示没找到要删除的记录*/
+        printf("按任意键继续！");
+        getchar();
+        getchar();
     } else {
         printf("输入1确认删除，输入0不删除(1/0)。\n"); /*确认是否要删除*/
         scanf("%d", &ch); /*输入一个整数0或1*/
@@ -156,6 +180,9 @@ void deletePersonByName() {
                 memcpy(&(addressBooks[j - 1]), &(addressBooks[j]), sizeof(AddressBook));
             }
             countPerson--; //记录数减1
+            printf("删除成功，按任意键继续！");
+            getchar();
+            getchar();
         }
     }
 }
@@ -166,20 +193,24 @@ void deletePersonByName() {
 void saveFile() {
     int i;
     FILE *fp; /*指向文件的指针*/
-    if ((fp = fopen("../resources/AddressBook.txt", "wb")) == NULL) { /*打开文件，并判断打开是否正常*/
-        printf("不能打开文件:../resources/AddressBook.txt\n");/*没打开*/
+    system("clear");/*清屏*/
+    if ((fp = fopen(FILE_PATH, "wb")) == NULL) { /*打开文件，并判断打开是否正常*/
+        printf("不能打开文件:%s\n",FILE_PATH);/*没打开*/
         exit(1); /*退出*/
     }
     printf("\n************开始保存文件************\n"); /*输出提示信息*/
     fprintf(fp, "%d", countPerson); /*将记录数写入文件*/
     fprintf(fp, "\r\n"); /*将换行符号写入文件*/
     for (i = 0; i < countPerson; ++i) {
+        fprintf(stdout, "%-16s%-11s", addressBooks[i].name, addressBooks[i].phone);
+        fprintf(stdout, "\r\n"); /*记录每行的一个回车换行符*/
         fprintf(fp, "%-16s%-11s", addressBooks[i].name, addressBooks[i].phone);
         fprintf(fp, "\r\n"); /*记录每行的一个回车换行符*/
     }
     fclose(fp); //关闭文件
     printf("****************保存成功***************\n"); /*显示保存成功*/
     printf("按任意键继续！");
+    getchar();
     getchar();
 }
 
@@ -188,15 +219,20 @@ void saveFile() {
  */
 void loadFile() {
     FILE *fp = NULL; /*指向文件的指针*/
-    if ((fp = fopen("../resources/AddressBook.txt", "rb")) == NULL) { /*打开文件，并判断打开是否正常*/
-        printf("不能打开文件:../resources/AddressBook.txt\n");/*没打开*/
+    system("clear");/*清屏*/
+    if ((fp = fopen(FILE_PATH, "rb")) == NULL) { /*打开文件，并判断打开是否正常*/
+        printf("不能打开文件:%s\n",FILE_PATH);/*没打开*/
         exit(1); /*退出*/
     }
     fscanf(fp, "%d", &countPerson);
     printf("\n************开始读取文件************\n"); /*输出提示信息*/
     for (int i = 0; i < countPerson; ++i) {
         fscanf(fp, "%16s%11s\n", addressBooks[i].name, addressBooks[i].phone);
+        fprintf(stdout,"%16s%11s\n", addressBooks[i].name, addressBooks[i].phone);
     }
     fclose(fp); //关闭文件
     printf("****************读取成功***************\n"); /*显示保存成功*/
+    printf("按任意键继续！");
+    getchar();
+    getchar();
 }
